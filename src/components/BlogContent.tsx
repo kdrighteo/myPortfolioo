@@ -3,6 +3,15 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
+// Define types for code props to fix the TypeScript error
+type CodeBlockProps = {
+  node?: any;
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+  [key: string]: any;
+};
+
 interface BlogContentProps {
   content: string;
 }
@@ -24,12 +33,17 @@ const BlogContent: React.FC<BlogContentProps> = ({ content }) => {
         blockquote: ({ node, ...props }) => (
           <blockquote className="border-l-4 border-secondary-300 pl-4 py-1 italic" {...props} />
         ),
-        code: ({ node, inline, ...props }) => 
-          inline ? (
-            <code className="bg-secondary-100 dark:bg-secondary-800 px-1 py-0.5 rounded font-mono text-sm" {...props} />
+        code: ({ inline, className, children, ...props }: CodeBlockProps) => {
+          return inline ? (
+            <code className="bg-secondary-100 dark:bg-secondary-800 px-1 py-0.5 rounded font-mono text-sm" {...props}>
+              {children}
+            </code>
           ) : (
-            <code className="block bg-secondary-100 dark:bg-secondary-800 p-4 rounded font-mono text-sm overflow-x-auto my-4" {...props} />
-          ),
+            <code className="block bg-secondary-100 dark:bg-secondary-800 p-4 rounded font-mono text-sm overflow-x-auto my-4" {...props}>
+              {children}
+            </code>
+          );
+        },
         pre: ({ node, ...props }) => <pre className="bg-transparent p-0 overflow-x-auto" {...props} />,
       }}
     >

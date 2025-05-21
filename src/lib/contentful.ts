@@ -1,8 +1,10 @@
 import { createClient } from "contentful";
 import { Project } from "./types";
 
-// Check if we have real Contentful credentials
+// Check if we have real Contentful credentials and whether to use local data
+const useLocalData = process.env.NEXT_PUBLIC_USE_LOCAL_DATA === 'true';
 const hasValidCredentials = 
+  !useLocalData &&
   process.env.CONTENTFUL_SPACE_ID && 
   process.env.CONTENTFUL_SPACE_ID !== "demo-space-id" && 
   process.env.CONTENTFUL_ACCESS_TOKEN && 
@@ -34,9 +36,9 @@ export async function fetchProjects(): Promise<Project[]> {
     // Contentful entries to match your Project type
     const response = await contentfulClient.getEntries({
       content_type: "project",
-      order: "-sys.createdAt", // Order by created date, newest first
+      order: ["-sys.createdAt"], // Order by created date, newest first
       include: 2, // Include 2 levels of linked references
-    });
+    } as any); // Use type assertion to avoid type errors
 
     // Example transformation of Contentful data to your Project type
     // This would need to be adjusted based on your actual Contentful content model
@@ -100,7 +102,7 @@ export async function fetchProjectBySlug(
       content_type: "project",
       "fields.slug": slug,
       include: 2,
-    });
+    } as any); // Use type assertion to avoid type errors
 
     if (response.items.length === 0) {
       return null;

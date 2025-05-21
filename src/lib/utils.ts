@@ -74,14 +74,17 @@ export function sortProjects(
 export function getUniqueProjectValues<T extends keyof Project>(
   projects: Project[],
   key: T
-): Project[T][] {
+): string[] {
   if (Array.isArray(projects[0]?.[key])) {
     // Handle array properties like tags, technologies
-    const allValues = projects.flatMap((project) => project[key]);
-    return Array.from(new Set(allValues)) as Project[T][];
+    const allValues = projects.flatMap((project) => {
+      const value = project[key];
+      return Array.isArray(value) ? value : [];
+    });
+    return Array.from(new Set(allValues)).map(String);
   } else {
     // Handle single value properties like category, year
-    const values = projects.map((project) => project[key]);
-    return Array.from(new Set(values)) as Project[T][];
+    const values = projects.map((project) => String(project[key]));
+    return Array.from(new Set(values));
   }
 }

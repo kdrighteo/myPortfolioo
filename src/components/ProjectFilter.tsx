@@ -46,11 +46,15 @@ export default function ProjectFilter({ projects, onFilterChange }: ProjectFilte
             className="w-full px-4 py-2 border border-secondary-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat as string} value={cat as string}>
-                {cat as string}
-              </option>
-            ))}
+            {categories.map((cat) => {
+              // Ensure category is treated as a string
+              const catString = String(cat);
+              return (
+                <option key={catString} value={catString}>
+                  {catString}
+                </option>
+              );
+            })}
           </select>
         </div>
         
@@ -66,11 +70,15 @@ export default function ProjectFilter({ projects, onFilterChange }: ProjectFilte
             className="w-full px-4 py-2 border border-secondary-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="">All Technologies</option>
-            {technologies.map((tech) => (
-              <option key={tech as string} value={tech as string}>
-                {tech as string}
-              </option>
-            ))}
+            {technologies.map((tech) => {
+              // Ensure tech is treated as a string
+              const techString = String(tech);
+              return (
+                <option key={techString} value={techString}>
+                  {techString}
+                </option>
+              );
+            })}
           </select>
         </div>
         
