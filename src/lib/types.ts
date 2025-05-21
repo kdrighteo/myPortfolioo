@@ -50,3 +50,21 @@ export interface Skill {
   category: 'frontend' | 'backend' | 'devops' | 'design' | 'other';
   icon?: string;
 }
+
+export type TimelineEventType = 'work' | 'education' | 'project' | 'award' | 'certification' | 'milestone';
+
+export interface TimelineEvent {
+  id: string;
+  title: string;
+  type: TimelineEventType;
+  organization?: string;
+  location?: string;
+  startDate: string; // Format: YYYY-MM
+  endDate?: string; // Format: YYYY-MM (or 'present' for current positions)
+  description: string;
+  details?: string;
+  skills?: string[];
+  image?: string;
+  url?: string;
+  isMilestone?: boolean; // Highlight this as a key achievement
+}

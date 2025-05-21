@@ -76,8 +76,24 @@ const MobileMenu = ({ isOpen, setIsOpen }: MobileMenuProps) => {
             </li>
             <li>
               <Link 
-                href="/#about"
-                className="text-xl font-medium text-secondary-600 hover:text-primary-600 transition"
+                href="/career"
+                className={`text-xl font-medium ${pathname.startsWith('/career') ? 'text-primary-600' : 'text-secondary-600'} hover:text-primary-600 transition`}
+              >
+                Career
+              </Link>
+            </li>
+            <li>
+              <Link 
+                href="/blog"
+                className={`text-xl font-medium ${pathname.startsWith('/blog') ? 'text-primary-600' : 'text-secondary-600'} hover:text-primary-600 transition`}
+              >
+                Blog
+              </Link>
+            </li>
+            <li>
+              <Link 
+                href="/about"
+                className={`text-xl font-medium ${pathname.startsWith('/about') ? 'text-primary-600' : 'text-secondary-600'} hover:text-primary-600 transition`}
               >
                 About
               </Link>

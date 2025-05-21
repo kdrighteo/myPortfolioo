@@ -34,6 +34,14 @@ const Header = () => {
               </li>
               <li>
                 <Link 
+                  href="/career"
+                  className={`${pathname.startsWith('/career') ? 'text-primary-600 font-medium' : 'text-secondary-600'} hover:text-primary-600 transition`}
+                >
+                  Career
+                </Link>
+              </li>
+              <li>
+                <Link 
                   href="/blog"
                   className={`${pathname.startsWith('/blog') ? 'text-primary-600 font-medium' : 'text-secondary-600'} hover:text-primary-600 transition`}
                 >
