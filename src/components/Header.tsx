@@ -23,33 +23,41 @@ const Header = () => {
           <SearchBar />
           <ThemeToggle />
           <nav>
-          <ul className="flex space-x-8">
-            <li>
-              <Link 
-                href="/projects"
-                className={`${pathname.startsWith('/projects') ? 'text-primary-600 font-medium' : 'text-secondary-600'} hover:text-primary-600 transition`}
-              >
-                Projects
-              </Link>
-            </li>
-            <li>
-              <Link 
-                href="/#about"
-                className="text-secondary-600 hover:text-primary-600 transition"
-              >
-                About
-              </Link>
-            </li>
-            <li>
-              <Link 
-                href="/#contact"
-                className="text-secondary-600 hover:text-primary-600 transition"
-              >
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </nav>
+            <ul className="flex space-x-6">
+              <li>
+                <Link 
+                  href="/projects"
+                  className={`${pathname.startsWith('/projects') ? 'text-primary-600 font-medium' : 'text-secondary-600'} hover:text-primary-600 transition`}
+                >
+                  Projects
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/blog"
+                  className={`${pathname.startsWith('/blog') ? 'text-primary-600 font-medium' : 'text-secondary-600'} hover:text-primary-600 transition`}
+                >
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/about"
+                  className={`${pathname.startsWith('/about') ? 'text-primary-600 font-medium' : 'text-secondary-600'} hover:text-primary-600 transition`}
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/#contact"
+                  className="text-secondary-600 hover:text-primary-600 transition"
+                >
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
         
         {/* Mobile Menu Button */}

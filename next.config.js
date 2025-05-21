@@ -2,8 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost'],
-    // Add any image domains you might need here
+    domains: ['localhost', 'via.placeholder.com'],
+    // Allow placeholder images for development
   },
 };
 
