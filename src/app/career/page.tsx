@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Timeline from '@/components/Timeline';
 import { timelineEvents } from '@/data/timeline';
 
@@ -32,7 +33,9 @@ export default function CareerPage() {
               </p>
             </div>
             
-            <Timeline events={timelineEvents} />
+            <Suspense fallback={<div className="p-8 text-center">Loading timeline...</div>}>
+              <Timeline events={timelineEvents} />
+            </Suspense>
           </div>
         </div>
       </section>

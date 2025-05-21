@@ -202,16 +202,36 @@ const ResumePDF = () => (
 );
 
 // PDF Download Button component
-const ResumeDownloadButton = () => (
-  <PDFDownloadLink 
-    document={<ResumePDF />} 
-    fileName="John_Doe_Resume.pdf"
-    className="btn btn-primary flex items-center gap-2"
-  >
-    {({ blob, url, loading, error }) =>
-      loading ? 'Generating PDF...' : 'Download Resume PDF'
-    }
-  </PDFDownloadLink>
-);
+const ResumeDownloadButton = () => {
+  // Use state to track client-side rendering
+  const [isClient, setIsClient] = React.useState(false);
+  
+  // Effect to set client-side rendering flag
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
+  // Only render the PDFDownloadLink on the client side
+  if (!isClient) {
+    return (
+      <button className="btn btn-primary flex items-center gap-2">
+        Download Resume PDF
+      </button>
+    );
+  }
+  
+  // Render actual PDFDownloadLink on client
+  return (
+    <PDFDownloadLink 
+      document={<ResumePDF />} 
+      fileName="John_Doe_Resume.pdf"
+      className="btn btn-primary flex items-center gap-2"
+    >
+      {({ blob, url, loading, error }) =>
+        loading ? 'Generating PDF...' : 'Download Resume PDF'
+      }
+    </PDFDownloadLink>
+  );
+};
 
 export default ResumeDownloadButton;

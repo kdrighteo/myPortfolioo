@@ -1,0 +1,9 @@
+{
+  "framework": "nextjs",
+  "devCommand": "npm run dev",
+  "env": {
+    "NEXT_PUBLIC_USE_LOCAL_DATA": "true",
+    "CONTENTFUL_SPACE_ID": "demo-space-id",
+    "CONTENTFUL_ACCESS_TOKEN": "demo-access-token"
+  }
+}
