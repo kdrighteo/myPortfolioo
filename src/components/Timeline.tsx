@@ -1,20 +1,40 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { TimelineEvent, TimelineEventType } from '@/lib/types';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface TimelineProps {
   events: TimelineEvent[];
 }
 
 const Timeline = ({ events }: TimelineProps) => {
-  const [filter, setFilter] = useState<TimelineEventType | 'all'>('all');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Get filter from URL or default to 'all'
+  const initialFilter = searchParams.get('filter') as TimelineEventType | 'all' || 'all';
+  const initialYear = searchParams.get('year') || undefined;
+  
+  const [filter, setFilter] = useState<TimelineEventType | 'all'>(initialFilter);
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
+  const [isPrinting, setIsPrinting] = useState(false);
+  
   const containerRef = useRef(null);
+  const timelineRef = useRef(null);
   const isInView = useInView(containerRef, { once: false, amount: 0.2 });
+  
+  // Create a parallax scroll effect
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ['start start', 'end end']
+  });
+  
+  const lineOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.2, 1, 1, 0.2]);
+  const lineScale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.8, 1, 1, 0.8]);
   
   // Sort events by date (most recent first)
   const sortedEvents = [...events].sort((a, b) => {
@@ -26,16 +46,52 @@ const Timeline = ({ events }: TimelineProps) => {
     ? sortedEvents 
     : sortedEvents.filter(event => event.type === filter);
   
-  // Get unique years from events for timeline navigation
-  const years = [...new Set(sortedEvents.map(event => event.startDate.substring(0, 4)))];
+  // Get unique years from events for timeline navigation (converting the Set to an Array)
+  const yearsArray = sortedEvents
+    .map(event => event.startDate.substring(0, 4))
+    .filter((year, index, self) => self.indexOf(year) === index);
+  
+  // Update URL when filter changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (filter === 'all') {
+      params.delete('filter');
+    } else {
+      params.set('filter', filter);
+    }
+    router.replace(`/career?${params.toString()}`);
+  }, [filter, router, searchParams]);
+  
+  // Scroll to year from URL param when component mounts
+  useEffect(() => {
+    if (initialYear) {
+      setTimeout(() => {
+        scrollToYear(initialYear);
+      }, 500); // Delay to ensure DOM is ready
+    }
+  }, [initialYear]);
+  
+  // Print mode
+  useEffect(() => {
+    if (isPrinting) {
+      window.print();
+      // Reset printing state after a delay
+      setTimeout(() => setIsPrinting(false), 1000);
+    }
+  }, [isPrinting]);
   
   // Scroll to a specific year section
-  const scrollToYear = (year: string) => {
+  const scrollToYear = useCallback((year: string) => {
     const element = document.getElementById(`year-${year}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // Update URL with the year
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('year', year);
+      router.replace(`/career?${params.toString()}`, { scroll: false });
     }
-  };
+  }, [router, searchParams]);
   
   // Helper function to format date
   const formatDate = (dateString: string): string => {
@@ -193,21 +249,51 @@ const Timeline = ({ events }: TimelineProps) => {
         </button>
       </div>
       
-      {/* Year Navigation */}
-      <div className="mb-8 flex flex-wrap justify-center gap-2">
-        {years.map((year) => (
-          <button
-            key={year}
-            onClick={() => scrollToYear(year)}
-            className="px-3 py-1 text-sm bg-secondary-200 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 rounded hover:bg-secondary-300 dark:hover:bg-secondary-600 transition-colors"
-          >
-            {year}
-          </button>
-        ))}
+      {/* Year Navigation with Professional Styling */}
+      <div className="mb-8 overflow-x-auto pb-2 hide-scrollbar">
+        <div className="flex justify-center space-x-1 min-w-max mx-auto max-w-3xl">
+          {yearsArray.map((year) => (
+            <button
+              key={year}
+              onClick={() => scrollToYear(year)}
+              className={`px-4 py-2 text-sm font-medium rounded-full transition-all transform hover:scale-105 ${initialYear === year || searchParams.get('year') === year
+                ? 'bg-primary-600 text-white shadow-md'
+                : 'bg-secondary-100 dark:bg-secondary-800 text-secondary-700 dark:text-secondary-300 hover:bg-secondary-200 dark:hover:bg-secondary-700'
+              }`}
+            >
+              {year}
+            </button>
+          ))}
+        </div>
       </div>
       
-      {/* Timeline */}
-      <div className="relative flex flex-col space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-secondary-300 dark:before:via-secondary-700 before:to-transparent">
+      {/* Print Resume Button */}
+      <div className="flex justify-end mb-6">
+        <button
+          onClick={() => setIsPrinting(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md transition-colors shadow-sm"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+          Print Timeline
+        </button>
+      </div>
+      
+      {/* Timeline with Enhanced Animations */}
+      <div 
+        ref={timelineRef}
+        className="relative flex flex-col space-y-8 print:space-y-4 print:my-8 print:py-0"
+      >
+        {/* Timeline vertical line with parallax effect */}
+        <motion.div 
+          className="absolute inset-0 ml-5 -translate-x-px md:mx-auto md:translate-x-0 h-full w-0.5 print:hidden"
+          style={{ 
+            opacity: lineOpacity,
+            scaleY: lineScale,
+            background: 'linear-gradient(to bottom, transparent, var(--primary-500) 10%, var(--primary-500) 90%, transparent)'
+          }}
+        />
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event, index) => {
             // Get the year and check if it's the first event of that year
@@ -220,8 +306,14 @@ const Timeline = ({ events }: TimelineProps) => {
                 id={isFirstOfYear ? `year-${year}` : undefined}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group ${
+                transition={{ 
+                  type: "spring", 
+                  damping: 12, 
+                  stiffness: 100, 
+                  delay: index * 0.08 
+                }}
+                whileHover={{ scale: 1.01 }}
+                className={`relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group print:flex-row print:mb-8 ${
                   event.isMilestone ? 'z-10' : ''
                 }`}
               >
@@ -232,27 +324,32 @@ const Timeline = ({ events }: TimelineProps) => {
                   </div>
                 )}
                 
-                {/* Timeline bullet point */}
-                <div className="flex items-center justify-center w-10 h-10 rounded-full border-2 shadow shrink-0 md:mx-auto z-10 
+                {/* Timeline bullet point with enhanced styling */}
+                <motion.div 
+                  className={`flex items-center justify-center w-12 h-12 print:w-10 print:h-10 rounded-full border-2 shadow-md shrink-0 md:mx-auto z-10 
                   bg-white dark:bg-secondary-800 border-secondary-300 dark:border-secondary-700
-                  group-hover:border-primary-500 dark:group-hover:border-primary-400 transition-colors
-                  ${event.isMilestone ? 'ring-2 ring-yellow-300 dark:ring-yellow-500/30' : ''}">
+                  group-hover:border-primary-500 dark:group-hover:border-primary-400 transition-all
+                  ${event.isMilestone ? 'ring-4 ring-yellow-300/50 dark:ring-yellow-500/30' : ''}`}
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
                   <span className={`text-secondary-600 dark:text-secondary-400 group-hover:text-primary-600 dark:group-hover:text-primary-400`}>
                     {getEventIcon(event.type)}
                   </span>
-                </div>
+                </motion.div>
                 
-                {/* Event content */}
+                {/* Event content with enhanced styling */}
                 <motion.div 
-                  className={`w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-lg border ${
+                  className={`w-[calc(100%-5rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-xl border print:border-secondary-200 print:shadow-none ${
                     getEventBgColor(event.type, event.isMilestone)
                   } ${
                     event.isMilestone 
-                      ? 'shadow-lg scale-105 md:scale-110 z-10' 
-                      : 'shadow-md hover:shadow-lg'
-                  } transition-all cursor-pointer`}
+                      ? 'shadow-xl scale-105 md:scale-110 z-10 border-l-4 border-r-4 border-l-yellow-400 border-r-yellow-400' 
+                      : 'shadow-md hover:shadow-xl backdrop-blur-sm'
+                  } transition-all cursor-pointer print:w-[calc(100%-5rem)]`}
                   onClick={() => setSelectedEvent(event)}
-                  whileHover={{ scale: event.isMilestone ? 1.05 : 1.03 }}
+                  whileHover={{ scale: event.isMilestone ? 1.05 : 1.03, y: -5 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className={`px-2 py-0.5 text-xs font-medium text-white rounded-full ${getEventColor(event.type)}`}>
@@ -308,29 +405,32 @@ const Timeline = ({ events }: TimelineProps) => {
         )}
       </div>
       
-      {/* Event Details Modal */}
+      {/* Enhanced Event Details Modal */}
       <AnimatePresence>
         {selectedEvent && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
+              animate={{ opacity: 0.6 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black z-40"
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40"
               onClick={() => setSelectedEvent(null)}
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25 }}
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div 
-                className="bg-white dark:bg-secondary-800 rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" 
+                className="bg-white dark:bg-secondary-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden" 
                 onClick={(e) => e.stopPropagation()}
               >
+                {/* Custom scrollbar for modal content */}
+                <div className="custom-scrollbar overflow-y-auto max-h-[90vh]">
                 <div className="relative">
                   {selectedEvent.image && (
                     <div className="h-48 md:h-64 relative">
@@ -355,61 +455,71 @@ const Timeline = ({ events }: TimelineProps) => {
                   </button>
                 </div>
                 
-                <div className="p-6">
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <div className={`px-3 py-1 text-sm font-medium text-white rounded-full ${getEventColor(selectedEvent.type)}`}>
-                      {selectedEvent.type.charAt(0).toUpperCase() + selectedEvent.type.slice(1)}
-                    </div>
-                    {selectedEvent.isMilestone && (
-                      <div className="px-3 py-1 text-sm font-medium text-white rounded-full bg-yellow-500">
-                        Milestone
+                <div className="p-6 pt-0">
+                  <div className="sticky top-0 z-10 pt-6 pb-4 bg-white dark:bg-secondary-800 border-b border-secondary-100 dark:border-secondary-700 mb-4 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95">
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      <div className={`px-3 py-1 text-sm font-medium text-white rounded-full ${getEventColor(selectedEvent.type)}`}>
+                        {selectedEvent.type.charAt(0).toUpperCase() + selectedEvent.type.slice(1)}
                       </div>
-                    )}
+                      {selectedEvent.isMilestone && (
+                        <div className="px-3 py-1 text-sm font-medium text-white rounded-full bg-yellow-500">
+                          Milestone
+                        </div>
+                      )}
+                      
+                      <div className="ml-auto text-secondary-600 dark:text-secondary-400 px-3 py-1 text-sm border border-secondary-200 dark:border-secondary-700 rounded-full">
+                        {formatDate(selectedEvent.startDate)} - {selectedEvent.endDate ? (selectedEvent.endDate === 'present' ? 'Present' : formatDate(selectedEvent.endDate)) : ''}
+                      </div>
+                    </div>
+                    
+                    <h2 className="text-2xl font-bold mb-2 dark:text-white">
+                      {selectedEvent.title}
+                    </h2>
                   </div>
                   
-                  <h2 className="text-2xl font-bold mb-2 dark:text-white">
-                    {selectedEvent.title}
-                  </h2>
-                  
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6 mt-2">
                     {selectedEvent.organization && (
-                      <div className="font-medium text-primary-600 dark:text-primary-400">
+                      <div className="font-medium text-primary-600 dark:text-primary-400 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
                         {selectedEvent.organization}
                       </div>
                     )}
                     
                     {selectedEvent.location && (
                       <div className="text-secondary-600 dark:text-secondary-400 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         {selectedEvent.location}
                       </div>
                     )}
-                    
-                    <div className="text-secondary-600 dark:text-secondary-400">
-                      {formatDate(selectedEvent.startDate)} - {selectedEvent.endDate ? (selectedEvent.endDate === 'present' ? 'Present' : formatDate(selectedEvent.endDate)) : ''}
-                    </div>
                   </div>
                   
-                  <div className="prose dark:prose-invert max-w-none mb-6">
-                    <p className="text-lg">{selectedEvent.description}</p>
+                  <div className="prose dark:prose-invert max-w-none mb-8 bg-secondary-50 dark:bg-secondary-800/50 p-5 rounded-lg border border-secondary-100 dark:border-secondary-700">
+                    <p className="text-lg font-medium mb-2">{selectedEvent.description}</p>
                     {selectedEvent.details && (
-                      <div className="mt-4">
+                      <div className="mt-3 text-secondary-700 dark:text-secondary-300">
                         <p>{selectedEvent.details}</p>
                       </div>
                     )}
                   </div>
                   
                   {selectedEvent.skills && selectedEvent.skills.length > 0 && (
-                    <div className="mb-6">
-                      <h3 className="text-lg font-medium mb-2 dark:text-white">Skills</h3>
+                    <div className="mb-8">
+                      <h3 className="text-lg font-medium mb-3 dark:text-white flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Skills &amp; Technologies
+                      </h3>
                       <div className="flex flex-wrap gap-2">
                         {selectedEvent.skills.map((skill) => (
                           <span 
                             key={skill} 
-                            className="px-3 py-1 text-sm bg-secondary-200 dark:bg-secondary-700 text-secondary-700 dark:text-secondary-300 rounded-full"
+                            className="px-3 py-1 text-sm bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 rounded-full hover:bg-primary-100 dark:hover:bg-primary-800/30 transition-colors"
                           >
                             {skill}
                           </span>
@@ -418,19 +528,30 @@ const Timeline = ({ events }: TimelineProps) => {
                     </div>
                   )}
                   
-                  {selectedEvent.url && (
-                    <div className="mt-6">
-                      <Link 
+                  <div className="mt-8 flex justify-between items-center">
+                    {selectedEvent.url && (
+                      <a 
                         href={selectedEvent.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="btn btn-primary"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md transition-colors shadow-sm"
                       >
-                        View More Details
-                      </Link>
-                    </div>
-                  )}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        View Project Details
+                      </a>
+                    )}
+                    
+                    <button
+                      onClick={() => setSelectedEvent(null)}
+                      className="px-4 py-2 border border-secondary-300 dark:border-secondary-600 text-secondary-700 dark:text-secondary-300 rounded-md hover:bg-secondary-100 dark:hover:bg-secondary-700 transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
+              </div>
               </div>
             </motion.div>
           </>
