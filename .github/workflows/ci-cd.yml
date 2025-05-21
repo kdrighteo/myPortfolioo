@@ -36,10 +36,9 @@ jobs:
       - name: Build project
         run: npm run build
 
-  deploy:
-    needs: test-and-lint
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  build-and-test:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
       - uses: actions/checkout@v4
@@ -48,14 +47,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
       
-      # Deploy to Vercel using their official GitHub Action
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./
-          vercel-args: '--prod'
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run linting
+        run: npm run lint
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Build project
+        run: npm run build
+        
+      - name: Display success message
+        run: echo "✅ Build passed! The project can now be deployed to Vercel manually or using Vercel's GitHub integration."
