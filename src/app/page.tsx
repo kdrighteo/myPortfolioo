@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import ProjectCard from "@/components/ProjectCard";
 import ContactForm from "@/components/ContactForm";
+import ProfileImage from "@/components/ProfileImage";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -81,14 +81,10 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="relative h-[500px] w-full rounded-lg overflow-hidden shadow-xl">
-                <Image
-                  src="https://via.placeholder.com/500x800?text=Gilbert+Danso"
-                  alt="Gilbert Danso"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  priority
+              <div className="rounded-lg shadow-xl">
+                <ProfileImage
+                  containerClassName="h-[500px] w-full rounded-lg"
+                  priority={true}
                 />
               </div>
             </div>

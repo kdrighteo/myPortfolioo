@@ -1,6 +1,6 @@
-# Portfolio Web App
+# Gilbert Danso - Personal Portfolio
 
-A professional portfolio web application built with Next.js and Tailwind CSS to showcase projects, demos, and experience.
+A professional portfolio website for Gilbert Danso, a web developer from Ghana. Built with Next.js and Tailwind CSS to showcase projects, skills, and professional experience.
 
 ## Features
 
@@ -23,11 +23,13 @@ A professional portfolio web application built with Next.js and Tailwind CSS to 
 1. Clone the repository or download the files
 
 2. Install dependencies
+
 ```bash
 npm install
 ```
 
 3. Run the development server
+
 ```bash
 npm run dev
 ```
@@ -63,6 +65,16 @@ portfolio/
 
 - Edit the homepage content in `src/app/page.tsx`
 - Update contact information in the footer component
+- Replace profile image at `public/images/profile.jpg` with your own photo
+
+### Profile Photo Configuration
+
+The portfolio uses a specialized `ProfileImage` component located at `src/components/ProfileImage.tsx` which provides:
+
+- Progressive image loading with blur effect
+- Optimized image delivery with Next.js Image component
+- Proper accessibility with descriptive alt text
+- Consistent sizing across responsive breakpoints
 
 ## Deployment
 

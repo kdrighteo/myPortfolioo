@@ -3,6 +3,7 @@ import SkillsChart from "@/components/SkillsChart";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import ProjectAnalytics from "@/components/ProjectAnalytics";
 import ResumeDownloadButton from "@/components/ResumePDF";
+import ProfileImage from "@/components/ProfileImage";
 
 export const metadata = {
   title: "About Me | Gilbert Danso",
@@ -73,16 +74,10 @@ export default function AboutPage() {
             {/* Image Column */}
             <div className="lg:col-span-1 order-1 lg:order-2">
               <div className="bg-white dark:bg-secondary-800 rounded-lg shadow-md p-4 mb-6">
-                <div className="relative h-80 w-full rounded-lg overflow-hidden">
-                  <Image
-                    src="https://via.placeholder.com/400x600?text=Gilbert+Danso"
-                    alt="Gilbert Danso"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    priority
-                  />
-                </div>
+                <ProfileImage
+                  containerClassName="h-80 w-full rounded-lg"
+                  priority={true}
+                />
               </div>
 
               <div className="bg-white dark:bg-secondary-800 rounded-lg shadow-md p-6">
