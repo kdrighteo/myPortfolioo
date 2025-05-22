@@ -30,7 +30,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({
         className={`object-cover duration-700 ease-in-out ${
           isLoading ? "scale-110 blur-sm" : "scale-100 blur-0"
         } ${className}`}
-        onLoadingComplete={() => setIsLoading(false)}
+        onLoad={() => setIsLoading(false)}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
     </div>

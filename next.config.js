@@ -2,8 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost', 'via.placeholder.com', 'images.ctfassets.net'],
-    // Allow placeholder images for development and Contentful
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.ctfassets.net",
+      },
+    ],
   },
   // Allow TypeScript errors to be resolved during a production build for deployment
   typescript: {

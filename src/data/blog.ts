@@ -1,11 +1,12 @@
-import { BlogPost } from '@/lib/types';
+import { BlogPost } from "@/lib/types";
 
 export const blogPosts: BlogPost[] = [
   {
-    id: '1',
-    title: 'Getting Started with Next.js and TypeScript',
-    slug: 'getting-started-with-nextjs-typescript',
-    excerpt: 'Learn how to set up a new Next.js project with TypeScript and start building modern web applications.',
+    id: "1",
+    title: "Getting Started with Next.js and TypeScript",
+    slug: "getting-started-with-nextjs-typescript",
+    excerpt:
+      "Learn how to set up a new Next.js project with TypeScript and start building modern web applications.",
     content: `
 # Getting Started with Next.js and TypeScript
 
@@ -92,21 +93,22 @@ export default AboutPage;
 
 Next.js with TypeScript provides a powerful foundation for building type-safe React applications. The combination offers excellent developer experience and helps catch errors early in the development process.
 `,
-    coverImage: 'https://via.placeholder.com/800x400?text=Next.js+TypeScript',
-    publishDate: '2025-03-15',
-    tags: ['Next.js', 'TypeScript', 'React', 'Web Development'],
+    coverImage: "/images/blog/nextjs-typescript.jpg",
+    publishDate: "2025-03-15",
+    tags: ["Next.js", "TypeScript", "React", "Web Development"],
     author: {
-      name: 'John Doe',
-      avatar: 'https://via.placeholder.com/100x100?text=John',
-      bio: 'Full-stack developer with a passion for React and TypeScript',
+      name: "John Doe",
+      avatar: "/images/blog/author-john.jpg",
+      bio: "Full-stack developer with a passion for React and TypeScript",
     },
     readingTime: 6,
   },
   {
-    id: '2',
-    title: 'Mastering Tailwind CSS for Rapid UI Development',
-    slug: 'mastering-tailwind-css-rapid-ui-development',
-    excerpt: 'Discover how Tailwind CSS can accelerate your UI development workflow and create beautiful designs without leaving your HTML.',
+    id: "2",
+    title: "Mastering Tailwind CSS for Rapid UI Development",
+    slug: "mastering-tailwind-css-rapid-ui-development",
+    excerpt:
+      "Discover how Tailwind CSS can accelerate your UI development workflow and create beautiful designs without leaving your HTML.",
     content: `
 # Mastering Tailwind CSS for Rapid UI Development
 
@@ -189,21 +191,22 @@ Implementing dark mode is straightforward:
 
 Tailwind CSS allows for rapid UI development by providing a comprehensive set of utility classes. While the HTML might initially look more verbose, the development speed and consistency achieved make it a powerful tool in any developer's arsenal.
 `,
-    coverImage: 'https://via.placeholder.com/800x400?text=Tailwind+CSS',
-    publishDate: '2025-04-02',
-    tags: ['CSS', 'Tailwind', 'UI Design', 'Web Development'],
+    coverImage: "/images/blog/tailwind-css.jpg",
+    publishDate: "2025-04-02",
+    tags: ["CSS", "Tailwind", "UI Design", "Web Development"],
     author: {
-      name: 'Jane Smith',
-      avatar: 'https://via.placeholder.com/100x100?text=Jane',
-      bio: 'UI/UX designer and frontend developer specializing in modern CSS frameworks',
+      name: "Jane Smith",
+      avatar: "/images/blog/author-jane.jpg",
+      bio: "UI/UX designer and frontend developer specializing in modern CSS frameworks",
     },
     readingTime: 5,
   },
   {
-    id: '3',
-    title: 'Introduction to Framer Motion for React Animations',
-    slug: 'introduction-to-framer-motion-react-animations',
-    excerpt: 'Learn how to create stunning animations in your React applications using Framer Motion.',
+    id: "3",
+    title: "Introduction to Framer Motion for React Animations",
+    slug: "introduction-to-framer-motion-react-animations",
+    excerpt:
+      "Learn how to create stunning animations in your React applications using Framer Motion.",
     content: `
 # Introduction to Framer Motion for React Animations
 
@@ -354,13 +357,13 @@ function Page() {
 
 Framer Motion provides a simple yet powerful API for creating animations in React applications. By using the declarative approach, you can create complex animations with minimal code while maintaining readability and maintainability.
 `,
-    coverImage: 'https://via.placeholder.com/800x400?text=Framer+Motion',
-    publishDate: '2025-04-18',
-    tags: ['React', 'Animation', 'Framer Motion', 'UI'],
+    coverImage: "/images/blog/framer-motion.jpg",
+    publishDate: "2025-04-18",
+    tags: ["React", "Animation", "Framer Motion", "UI"],
     author: {
-      name: 'Mark Johnson',
-      avatar: 'https://via.placeholder.com/100x100?text=Mark',
-      bio: 'Animation specialist and React developer',
+      name: "Mark Johnson",
+      avatar: "/images/blog/author-mark.jpg",
+      bio: "Animation specialist and React developer",
     },
     readingTime: 7,
   },
