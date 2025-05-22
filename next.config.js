@@ -7,6 +7,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.ctfassets.net",
       },
+      {
+        protocol: "https",
+        hostname: "github-readme-stats.vercel.app",
+      },
     ],
   },
   // Allow TypeScript errors to be resolved during a production build for deployment

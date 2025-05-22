@@ -3,6 +3,12 @@ import Link from "next/link";
 import ProjectCard from "@/components/ProjectCard";
 import ContactForm from "@/components/ContactForm";
 import ProfileImage from "@/components/ProfileImage";
+import PortfolioImpact from "@/components/PortfolioImpact";
+import AfricanTechFocus from "@/components/AfricanTechFocus";
+import SkillsRoadmap from "@/components/SkillsRoadmap";
+import DownloadableCV from "@/components/DownloadableCV";
+import AnimatedSection from "@/components/AnimatedSection";
+import GitHubStats from "@/components/GitHubStats";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -127,13 +133,36 @@ export default function Home() {
                 ))}
               </div>
 
-              <Link href="/about" className="btn btn-primary">
-                Learn More About Me
-              </Link>
+              <div className="flex flex-wrap gap-4">
+                <Link href="/about" className="btn btn-primary">
+                  Learn More About Me
+                </Link>
+                <DownloadableCV />
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* African Tech Focus Section */}
+      <AnimatedSection delay={100}>
+        <AfricanTechFocus />
+      </AnimatedSection>
+
+      {/* Skills Roadmap Section */}
+      <AnimatedSection delay={200}>
+        <SkillsRoadmap />
+      </AnimatedSection>
+
+      {/* Portfolio Impact Section */}
+      <AnimatedSection delay={300}>
+        <PortfolioImpact />
+      </AnimatedSection>
+
+      {/* GitHub Stats Section */}
+      <AnimatedSection delay={400}>
+        <GitHubStats />
+      </AnimatedSection>
 
       {/* Contact Section */}
       <section id="contact" className="section bg-secondary-50">
