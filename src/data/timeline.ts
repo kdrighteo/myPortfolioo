@@ -4,7 +4,7 @@ export const timelineEvents: TimelineEvent[] = [
   // Work Experience
   {
     id: "job-1",
-    title: "Senior Frontend Developer",
+    title: "Junior Frontend Developer",
     type: "work",
     organization: "TechCorp Inc.",
     location: "New York, NY",
@@ -22,7 +22,7 @@ export const timelineEvents: TimelineEvent[] = [
     title: "Frontend Developer",
     type: "work",
     organization: "WebSolutions Ltd.",
-    location: "San Francisco, CA",
+    location: "Abuja, Nigeria",
     startDate: "2019-05",
     endDate: "2021-12",
     description: "Developed responsive web applications for various clients",
@@ -36,7 +36,7 @@ export const timelineEvents: TimelineEvent[] = [
     title: "Junior Web Developer",
     type: "work",
     organization: "DigitalCraft Agency",
-    location: "Boston, MA",
+    location: "Kumasi, Ghana",
     startDate: "2017-06",
     endDate: "2019-04",
     description: "Built and maintained websites for small to medium businesses",
@@ -51,11 +51,11 @@ export const timelineEvents: TimelineEvent[] = [
     id: "edu-1",
     title: "Bachelor of Science in Computer Science",
     type: "education",
-    organization: "New York University",
-    location: "New York, NY",
-    startDate: "2013-09",
-    endDate: "2017-05",
-    description: "Graduated with honors (GPA: 3.8/4.0)",
+    organization: "university of Ghana, Legon",
+    location: "Accra, Ghana, Gh",
+    startDate: "2018-09",
+    endDate: "2022-05",
+    description: "Graduated with honors (GPA: 3.0/4.0)",
     details:
       'Specialized in Web Development and UI/UX Design. Completed thesis on "Modern Frontend Architecture Patterns". Active member of the Computer Science Club and participated in multiple hackathons.',
     skills: [
