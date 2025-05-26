@@ -65,7 +65,7 @@ export const timelineEvents: TimelineEvent[] = [
       "UI/UX",
       "Web Development",
     ],
-    image: "/images/timeline/university.jpg",
+    image: "/images/timeline/ug1.jpg",
   },
 
   // Projects
